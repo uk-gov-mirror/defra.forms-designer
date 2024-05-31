@@ -34,6 +34,7 @@ module.exports = {
           './tsconfig.dev.json',
           './designer/client/tsconfig.json',
           './designer/server/tsconfig.json',
+          './token-util/tsconfig.json',
           './model/tsconfig.json'
         ],
         tsconfigRootDir: __dirname

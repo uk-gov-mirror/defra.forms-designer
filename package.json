@@ -11,7 +11,8 @@
   "type": "module",
   "workspaces": [
     "model",
-    "designer"
+    "designer",
+    "token-util"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
