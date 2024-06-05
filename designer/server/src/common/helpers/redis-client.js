@@ -50,6 +50,8 @@ function buildRedisClient() {
     )
   }
 
+  // TODO add proper logger
+
   redisClient.on('connect', () => {
     logger.info('Connected to Redis server')
   })
