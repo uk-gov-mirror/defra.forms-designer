@@ -8,7 +8,7 @@ const submissionEndpoint = new URL('/file/', config.submissionUrl)
 
 /**
  * @param {string} fieldId
- * @returns {Promise<{ statusCode: StatusCodes, emailIsCaseSensitive: boolean }>}
+ * @returns {Promise<{ statusCode: StatusCodes, emailIsCaseSensitive?: boolean }>}
  */
 export async function checkFileStatus(fieldId) {
   const requestUrl = new URL(`./${fieldId}`, submissionEndpoint)
