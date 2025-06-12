@@ -1,4 +1,4 @@
-import { SchemaVersion } from '@defra/forms-model'
+import { SchemaVersion, formDefinitionV2Schema } from '@defra/forms-model'
 import { StatusCodes } from 'http-status-codes'
 
 import * as scopes from '~/src/common/constants/scopes.js'

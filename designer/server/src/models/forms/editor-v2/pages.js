@@ -2,11 +2,13 @@ import {
   ComponentType,
   ControllerType,
   FormStatus,
+  formDefinitionV2Schema,
   hasComponents,
   hasComponentsEvenIfNoNext,
   isFormType
 } from '@defra/forms-model'
 
+import { buildErrorDetails } from '~/src/common/helpers/build-error-details.js'
 import {
   buildPreviewUrl,
   getFormSpecificNavigation
@@ -204,6 +206,27 @@ export function pagesViewModel(metadata, definition, notification) {
     })
   }
 
+  const { error } = formDefinitionV2Schema.validate(definition)
+  let errorList
+
+  if (error) {
+    errorList = error.details.map((detailsItem) => {
+      const { path } = detailsItem
+      const isCondition = path[0] === 'conditions'
+
+      const condition = getByPath(definition, path.slice(0, 2))
+
+      const text = isCondition
+        ? `The condition "${condition.displayName}" is invalid. It relies upon an item in a list that no longer exists.`
+        : 'Unknown error'
+
+      return {
+        text,
+        href: `/library/invalid-conditions/editor-v2/condition/${condition.id}`
+      }
+    })
+  }
+
   const pageHeading = 'Add and edit pages'
   const pageCaption = metadata.title
   const pageTitle = `${pageHeading} - ${pageCaption}`
@@ -220,13 +243,27 @@ export function pagesViewModel(metadata, definition, notification) {
       text: pageCaption
     },
     pageActions,
-    notification
+    notification,
+    errorList
   }
 
   return {
     ...pageListModel,
     backLink: formOverviewBackLink(metadata.slug)
   }
+}
+
+/**
+ *
+ * @param {object} obj
+ * @param {any[]} pathArray
+ * @returns
+ */
+function getByPath(obj, pathArray) {
+  return pathArray.reduce(
+    (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
+    obj
+  )
 }
 
 /**

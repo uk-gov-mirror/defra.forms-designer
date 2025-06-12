@@ -46,9 +46,9 @@ function getListItem(model: RuntimeFormModel, listId: string, itemId: string) {
 
   const item = foundList.items.find((item) => item.id === itemId)
 
-  if (!item) {
-    throw Error('List item not found')
-  }
+  // if (!item) {
+  //   throw Error('List item not found')
+  // }
 
   return item
 }
@@ -60,9 +60,9 @@ function createConditionValueDataFromListItemRefV2(
   const refValue = getListItem(model, value.listId, value.itemId)
 
   return {
-    display: refValue.text,
+    display: refValue?.text ?? '',
     type: ConditionType.Value,
-    value: refValue.value.toString()
+    value: refValue?.value.toString() ?? ''
   }
 }
 
