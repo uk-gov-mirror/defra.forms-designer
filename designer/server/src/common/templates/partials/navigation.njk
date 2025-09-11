@@ -9,7 +9,7 @@
 {%- set accountLinkUrl = "/auth/account" if (isAuthenticated and config.featureFlagUseEntitlementApi) else "/library" -%}
 
 {%- set adminNavigation = [] -%}
-{%- if isAuthenticated and isAdmin -%}
+{%- if isAuthenticated and isAdmin and config.featureFlagUseEntitlementApi -%}
   {%- set adminNavigation = [
     {
       text: "Manage users",

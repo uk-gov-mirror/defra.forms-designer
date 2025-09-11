@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto'
 
-import { getErrorMessage, mapScopesToRoles } from '@defra/forms-model'
+import {
+  Roles,
+  Scopes,
+  getErrorMessage,
+  mapScopesToRoles
+} from '@defra/forms-model'
 import { DateTime } from 'luxon'
 
 import {
@@ -91,7 +96,12 @@ export async function createUserSession(request, artifacts, flowIdOverride) {
     }
   } else {
     credentials.scope = getUserScopes(credentials, claims)
-    user.roles = []
+    if (credentials.scope.length === 0) {
+      credentials.scope = [Scopes.FormRead, Scopes.FormEdit]
+    }
+    user.roles = credentials.scope.includes(Scopes.UserDelete)
+      ? [Roles.Admin]
+      : [Roles.FormCreator]
   }
 
   // Create and retrieve user session from Redis
@@ -101,6 +111,5 @@ export async function createUserSession(request, artifacts, flowIdOverride) {
 
 /**
  * @import { AuthArtifacts, Request, UserCredentials } from '@hapi/hapi'
- * @import { Roles } from '@defra/forms-model'
  * @import { AuthWithTokens } from '~/src/common/helpers/auth/types.js'
  */
