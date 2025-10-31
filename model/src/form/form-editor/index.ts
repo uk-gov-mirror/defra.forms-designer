@@ -59,6 +59,7 @@ export const questionTypeFullSchema = Joi.string()
     ComponentType.TelephoneNumberField,
     ComponentType.FileUploadField,
     ComponentType.EmailAddressField,
+    ComponentType.DeclarationField,
     ComponentType.YesNoField,
     ComponentType.CheckboxesField,
     ComponentType.RadiosField,
