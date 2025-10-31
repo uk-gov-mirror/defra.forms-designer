@@ -119,7 +119,17 @@ export const baseSchema = Joi.object().keys({
     }
   ),
   jsEnabled: questionDetailsFullSchema.jsEnabledSchema,
-  usePostcodeLookup: questionDetailsFullSchema.usePostcodeLookupSchema
+  usePostcodeLookup: questionDetailsFullSchema.usePostcodeLookupSchema,
+  declarationText: questionDetailsFullSchema.declarationTextSchema.when(
+    'questionType',
+    {
+      is: ComponentType.DeclarationField,
+      then: questionDetailsFullSchema.declarationTextSchema.messages({
+        '*': 'Enter declaration text'
+      }),
+      otherwise: Joi.forbidden()
+    }
+  )
 })
 
 /**
@@ -230,6 +240,18 @@ export const allBaseSettingsFields = {
         }
       }
     ]
+  },
+  declarationText: {
+    id: 'declarationText',
+    name: 'declarationText',
+    idPrefix: 'declarationText',
+    label: {
+      text: 'Declaration text',
+      classes: GOVUK_LABEL__M
+    },
+    hint: {
+      text: 'You can use Markdown if you want to format the content or add links'
+    }
   }
 }
 
@@ -367,6 +389,11 @@ export function getFieldValue(
       )
       return `${addressField?.options.usePostcodeLookup === true}`
     }
+    case 'declarationText': {
+      const declarationField =
+        /** @type {DeclarationFieldComponent | undefined} */ (questionFields)
+      return declarationField?.content
+    }
   }
   return undefined
 }
@@ -395,6 +422,14 @@ export const ukAddressFields = /** @type {FormEditorGovukFieldBaseKeys[]} */ ([
   QuestionBaseSettings.UsePostcodeLookup,
   QuestionBaseSettings.ShortDescription
 ])
+
+export const declarationFields =
+  /** @type {FormEditorGovukFieldBaseKeys[]} */ ([
+    QuestionBaseSettings.Question,
+    QuestionBaseSettings.DeclarationText,
+    QuestionBaseSettings.QuestionOptional,
+    QuestionBaseSettings.ShortDescription
+  ])
 
 export const fileUploadFields = /** @type {FormEditorGovukFieldBaseKeys[]} */ ([
   QuestionBaseSettings.Question,
@@ -426,6 +461,9 @@ export function getQuestionFieldList(questionType) {
   }
   if (questionType === ComponentType.UkAddressField) {
     return ukAddressFields
+  }
+  if (questionType === ComponentType.DeclarationField) {
+    return declarationFields
   }
   if (
     questionType === ComponentType.RadiosField ||
@@ -519,6 +557,6 @@ export function getFileUploadFields(questionFields, validation) {
 }
 
 /**
- * @import { FormDefinition, ComponentDef, FormEditor, FormEditorGovukField, FormEditorInputQuestion, GovukField, InputFieldsComponentsDef, Item, FormEditorGovukFieldBase, FormEditorGovukFieldBaseKeys, FormComponentsDef, UkAddressFieldComponent } from '@defra/forms-model'
+ * @import { FormDefinition, ComponentDef, DeclarationFieldComponent, FormEditor, FormEditorGovukField, FormEditorInputQuestion, GovukField, InputFieldsComponentsDef, Item, FormEditorGovukFieldBase, FormEditorGovukFieldBaseKeys, FormComponentsDef, UkAddressFieldComponent } from '@defra/forms-model'
  * @import { ValidationFailure } from '~/src/common/helpers/types.js'
  */

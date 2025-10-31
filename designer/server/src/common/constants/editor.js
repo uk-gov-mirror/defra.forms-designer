@@ -39,6 +39,10 @@ export const QuestionTypeDescriptions =
       description: 'Email address'
     },
     {
+      type: ComponentType.DeclarationField,
+      description: 'Declaration'
+    },
+    {
       type: ComponentType.YesNoField,
       description: 'List: yes or no'
     },
@@ -88,7 +92,8 @@ export const QuestionBaseSettings = {
   TabularDataTypes: 'tabularDataTypes',
   RadiosOrCheckboxes: 'radiosOrCheckboxes',
   AutoCompleteOptions: 'autoCompleteOptions',
-  UsePostcodeLookup: 'usePostcodeLookup'
+  UsePostcodeLookup: 'usePostcodeLookup',
+  DeclarationText: 'declarationText'
 }
 
 /**
