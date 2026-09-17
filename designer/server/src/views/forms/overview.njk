@@ -376,6 +376,13 @@
   {% endif %}
 {% endset %}
 
+{% set formIdDisplay %}
+  <p class="govuk-body-s govuk-!-margin-top-1 app-form-id" data-rootCopyToClip>
+    ID: <span class="app-form-id__value" data-sourceCopyToClip>{{ form.id }}</span>
+    <a class="govuk-link govuk-link--no-visited-state js-show govuk-!-margin-left-2" href="#" data-linkCopyToClip>Copy to clipboard</a>
+  </p>
+{% endset %}
+
 {% set sidebarContent %}
   {{ appFormCard(formManage) }}
   {% if history and history.hasItems %}
@@ -398,7 +405,7 @@
         {
           html: appGridLayout([
             {
-              html: appHeading(pageHeading),
+              html: appHeading(pageHeading) + formIdDisplay,
               classes: "govuk-grid-column-two-thirds govuk-grid-column-full-from-desktop"
             },
             {
@@ -415,4 +422,14 @@
       ]
     ]) }}
   </div>
+{% endblock %}
+
+{% block mainEnd %}
+  {{ super() }}
+  <script type="module">
+    import { initialiseAllCopyLinks } from "{{ getAssetPath("utilities.js") }}"
+    document.addEventListener("DOMContentLoaded", () => {
+      initialiseAllCopyLinks()
+    })
+  </script>
 {% endblock %}

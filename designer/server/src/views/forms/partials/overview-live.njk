@@ -9,11 +9,11 @@
 {% endset %}
 
 {% set formCreated %}
-  {{ form.live.createdAt | formatDate }} by {{ form.live.createdBy.displayName | escape }}
+  {{ form.live.createdAt | formatDateTime("d MMM yyyy 'at' h:mmaaa") }} by {{ form.live.createdBy.displayName | escape }}
 {% endset %}
 
 {% set formUpdated %}
-  {{ form.live.updatedAt | formatDate }} by {{ form.live.updatedBy.displayName | escape }}
+  {{ form.live.updatedAt | formatDateTime("d MMM yyyy 'at' h:mmaaa") }} by {{ form.live.updatedBy.displayName | escape }}
 {% endset %}
 
 {% set formPreviewLink %}

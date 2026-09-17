@@ -5,11 +5,11 @@
 {% endset %}
 
 {% set formUpdated %}
-  {{ form.draft.updatedAt | formatDate }} by {{ form.draft.updatedBy.displayName | escape }}
+  {{ form.draft.updatedAt | formatDateTime("d MMM yyyy 'at' h:mmaaa") }} by {{ form.draft.updatedBy.displayName | escape }}
 {% endset %}
 
 {% set formCreated %}
-  {{ form.draft.createdAt | formatDate }} by {{ form.draft.createdBy.displayName | escape }}
+  {{ form.draft.createdAt | formatDateTime("d MMM yyyy 'at' h:mmaaa") }} by {{ form.draft.createdBy.displayName | escape }}
 {% endset %}
 
 {% set formPreviewLink %}

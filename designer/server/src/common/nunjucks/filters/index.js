@@ -1,6 +1,7 @@
 export { markdownToHtml as markdown, setProperty } from '@defra/forms-model'
 export { formatCurrency } from '~/src/common/nunjucks/filters/format-currency.js'
 export { formatDate } from '~/src/common/nunjucks/filters/format-date.js'
+export { formatDateTime } from '~/src/common/nunjucks/filters/format-date-time.js'
 export { formatJSON } from '~/src/common/nunjucks/filters/format-json.js'
 export { formatNumber } from '~/src/common/nunjucks/filters/format-number.js'
 export { renderErrorTemplate } from '~/src/common/nunjucks/filters/render-error-template.js'

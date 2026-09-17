@@ -830,6 +830,95 @@ describe('Forms library routes', () => {
       })
     })
 
+    describe('Form ID display', () => {
+      it('should display the full form ID next to the heading', async () => {
+        jest.mocked(forms.get).mockResolvedValueOnce(formMetadata)
+
+        const options = {
+          method: 'GET',
+          url: '/library/my-form-slug',
+          auth
+        }
+
+        await renderResponse(server, options)
+
+        const $formId = document.querySelector('.app-form-id')
+
+        expect($formId).toHaveTextContent(formMetadata.id)
+      })
+    })
+
+    describe('Created/Updated timestamps', () => {
+      /**
+       * @param {string} keyText
+       */
+      function findSummaryValue(keyText) {
+        const $rows = document.querySelectorAll('.govuk-summary-list__row')
+        const $row = Array.from($rows).find(
+          (row) =>
+            row
+              .querySelector('.govuk-summary-list__key')
+              ?.textContent?.trim() === keyText
+        )
+        return $row?.querySelector('.govuk-summary-list__value')
+      }
+
+      it('should show the full UK-local timestamp including minutes for the draft form', async () => {
+        jest.mocked(forms.get).mockResolvedValueOnce({
+          ...formMetadata,
+          draft: {
+            ...formMetadata.draft,
+            // 14:01 UTC is 15:01 BST in June
+            createdAt: new Date('2019-06-14T14:01:00.000Z'),
+            updatedAt: new Date('2019-06-14T14:01:00.000Z')
+          }
+        })
+
+        const options = {
+          method: 'GET',
+          url: '/library/my-form-slug',
+          auth
+        }
+
+        await renderResponse(server, options)
+
+        const $updated = findSummaryValue('Updated')
+        const $created = findSummaryValue('Created')
+
+        expect($updated).toHaveTextContent('14 Jun 2019 at 3:01pm')
+        expect($created).toHaveTextContent('14 Jun 2019 at 3:01pm')
+      })
+
+      it('should show the full UK-local timestamp including minutes for the live form', async () => {
+        jest.mocked(forms.get).mockResolvedValueOnce({
+          ...formMetadata,
+          live: {
+            ...formMetadata.draft,
+            // 14:01 UTC is 14:01 GMT in January
+            createdAt: new Date('2019-01-14T14:01:00.000Z'),
+            updatedAt: new Date('2019-01-14T14:01:00.000Z')
+          }
+        })
+        jest
+          .mocked(forms.getDraftFormDefinition)
+          .mockResolvedValueOnce(formDefinitionV2)
+
+        const options = {
+          method: 'GET',
+          url: '/library/my-form-slug',
+          auth
+        }
+
+        await renderResponse(server, options)
+
+        const $madeLive = findSummaryValue('Made live')
+        const $lastUpdated = findSummaryValue('Last updated')
+
+        expect($madeLive).toHaveTextContent('14 Jan 2019 at 2:01pm')
+        expect($lastUpdated).toHaveTextContent('14 Jan 2019 at 2:01pm')
+      })
+    })
+
     describe('Draft buttons and an offline button in side bar', () => {
       it('should show "Create draft to edit" when no draft exists', async () => {
         jest.mocked(forms.get).mockResolvedValueOnce({
