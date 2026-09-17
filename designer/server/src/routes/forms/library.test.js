@@ -846,6 +846,25 @@ describe('Forms library routes', () => {
 
         expect($formId).toHaveTextContent(formMetadata.id)
       })
+
+      it('should show a copy icon with an accessible label instead of visible link text', async () => {
+        jest.mocked(forms.get).mockResolvedValueOnce(formMetadata)
+
+        const options = {
+          method: 'GET',
+          url: '/library/my-form-slug',
+          auth
+        }
+
+        await renderResponse(server, options)
+
+        const $copyLink = document.querySelector('[data-linkcopytoclip]')
+
+        expect($copyLink?.querySelector('svg')).toBeInTheDocument()
+        expect(
+          $copyLink?.querySelector('.govuk-visually-hidden')
+        ).toHaveTextContent('Copy to clipboard')
+      })
     })
 
     describe('Created/Updated timestamps', () => {

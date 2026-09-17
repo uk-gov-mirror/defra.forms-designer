@@ -379,7 +379,13 @@
 {% set formIdDisplay %}
   <p class="govuk-body-s govuk-!-margin-top-1 app-form-id" data-rootCopyToClip>
     ID: <span class="app-form-id__value" data-sourceCopyToClip>{{ form.id }}</span>
-    <a class="govuk-link govuk-link--no-visited-state js-show govuk-!-margin-left-2" href="#" data-linkCopyToClip>Copy to clipboard</a>
+    <a class="govuk-link govuk-link--no-visited-state js-show govuk-!-margin-left-2" href="#" data-linkCopyToClip>
+      <svg class="app-copy-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+        <rect x="5" y="5" width="9" height="9" rx="1" stroke="currentColor"></rect>
+        <path d="M3 10V3a1 1 0 0 1 1-1h7" stroke="currentColor"></path>
+      </svg>
+      <span class="govuk-visually-hidden">Copy to clipboard</span>
+    </a>
   </p>
 {% endset %}
 

@@ -24,18 +24,18 @@ export function copyToClip(event, linkElem) {
     .closest('[data-rootCopyToClip]')
     ?.querySelector('[data-sourceCopyToClip]')
   if (blockForCopy) {
-    const originalText = linkElem.textContent
+    const originalNodes = Array.from(linkElem.childNodes)
     navigator.clipboard.writeText(blockForCopy.textContent ?? '').then(
       function () {
         linkElem.textContent = '--------Copied--------'
         setTimeout(() => {
-          linkElem.textContent = originalText
+          linkElem.replaceChildren(...originalNodes)
         }, DISPLAY_TOGGLE_TIME_IN_MILLIS)
       },
       function () {
         linkElem.textContent = 'Error copying'
         setTimeout(() => {
-          linkElem.textContent = originalText
+          linkElem.replaceChildren(...originalNodes)
         }, DISPLAY_TOGGLE_TIME_IN_MILLIS)
       }
     )

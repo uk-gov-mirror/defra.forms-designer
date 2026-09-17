@@ -43,6 +43,28 @@ describe('utilities', () => {
       expect(link?.textContent).toBe('Copy to clipboard')
     })
 
+    test('should preserve non-text markup (e.g. an icon) after copy and restore', async () => {
+      document.documentElement.innerHTML = `
+      <div class="json-item" data-rootCopyToClip>
+        <div class="action-links-top-right">
+          <a class="govuk-link" href="#" data-linkCopyToClip id="copy-link"><svg class="app-copy-icon"></svg><span class="govuk-visually-hidden">Copy to clipboard</span></a>
+        </div>
+        <pre class="json-block" data-sourceCopyToClip><code>Some JSON text content</code></pre>
+      </div>`
+      initialiseAllCopyLinks()
+      const link = document.querySelector('#copy-link')
+      if (link instanceof HTMLAnchorElement) {
+        link.click()
+      }
+      await new Promise((_resolve) => setTimeout(_resolve, 500))
+      expect(link?.textContent).toBe('--------Copied--------')
+      await new Promise((_resolve) => setTimeout(_resolve, 1500))
+      expect(link?.querySelector('svg')).not.toBeNull()
+      expect(link?.querySelector('.govuk-visually-hidden')?.textContent).toBe(
+        'Copy to clipboard'
+      )
+    })
+
     test('should display error if copy fails', async () => {
       Object.assign(navigator, {
         clipboard: {
