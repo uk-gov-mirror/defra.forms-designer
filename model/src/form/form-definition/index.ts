@@ -1,4 +1,4 @@
-import JoiDate from '@joi/date'
+import { JoiDate } from '@joi/date'
 import JoiBase, { type CustomHelpers, type LanguageMessages } from 'joi'
 import { v4 as uuidV4 } from 'uuid'
 

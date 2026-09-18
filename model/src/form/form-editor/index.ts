@@ -1,4 +1,4 @@
-import JoiDate from '@joi/date'
+import { JoiDate } from '@joi/date'
 import JoiBase, { type ArraySchema, type GetRuleOptions } from 'joi'
 
 import { rtrimOnly } from '~/src/common/rtrim-only.js'
