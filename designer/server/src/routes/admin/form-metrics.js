@@ -1,7 +1,13 @@
-import { FormMetricName, Scopes, getErrorMessage } from '@defra/forms-model'
+import {
+  FormMetricName,
+  FormStatus,
+  Scopes,
+  getErrorMessage
+} from '@defra/forms-model'
 import { format } from 'date-fns'
 import { StatusCodes } from 'http-status-codes'
 import Joi from 'joi'
+import { LRUCache } from 'lru-cache'
 
 import { mapUserForAudit } from '~/src/common/helpers/auth/user-helper.js'
 import { logger } from '~/src/common/helpers/logging/logger.js'
@@ -38,6 +44,11 @@ const FORM_ACTIVITY_TAB = 'form-activity'
 
 export const FORM_ACTIVITY_OPTION_ALL = 'all'
 export const FORM_ACTIVITY_OPTION_WELSH = 'cy'
+
+const cache = new LRUCache({
+  max: 100,
+  ttl: 1000 * 60 * 60 // 60 minutes
+})
 
 const filterAndSortSchema = Joi.object({
   // Sorting
@@ -382,10 +393,69 @@ export default [
         params: drilldownParamSchema
       }
     }
+  }),
+
+  /**
+   * @satisfies {ServerRoute}
+   */
+  ({
+    method: 'GET',
+    path: '/public/metrics/forms-tile',
+    async handler(request, h) {
+      // Get from cache
+      const metrics = await getCachedMetrics()
+      const count = metrics.overview.filter(
+        (row) => row.formStatus === FormStatus.Live
+      ).length
+
+      return h.view('website/metrics-tile', {
+        title: 'Number of live forms',
+        count
+      })
+    }
+  }),
+  /**
+   * @satisfies {ServerRoute}
+   */
+  ({
+    method: 'GET',
+    path: '/public/metrics/submissions-tile',
+    async handler(request, h) {
+      // Get from cache
+      const metrics = await getCachedMetrics()
+      const count = metrics.totals.allTime?.Submissions.count
+
+      return h.view('website/metrics-tile', {
+        title: 'Number of live submissions',
+        count
+      })
+    }
   })
 ]
 
 /**
+ * Gets full metrics from the cache, or makes an API call to put them in the cache.
+ * Metrics are only updated at 3am every morning, so no issues with using a long cache here.
+ * @returns {Promise<{ overview: FormOverviewMetric[], totals: FormTotalsMetric }>}
+ */
+export async function getCachedMetrics() {
+  const key = 'metrics-overview-cache'
+
+  if (cache.has(key)) {
+    return /** @type {{ overview: FormOverviewMetric[], totals: FormTotalsMetric }} */ (
+      cache.get(key)
+    )
+  }
+
+  const metrics = await getMetrics()
+
+  cache.set(key, metrics)
+
+  return metrics
+}
+
+/**
  * @import { ServerRoute } from '@hapi/hapi'
+ * @import { FormOverviewMetric, FormTotalsMetric } from '@defra/forms-model'
  * @import { FilterAndSortCriteria } from '~/src/models/admin/metrics-helper.js'
  */
